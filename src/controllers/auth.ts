@@ -8,6 +8,11 @@ export const signUp = async (req: express.Request, res: express.Response) => {
   const salt = bcryptjs.genSaltSync(10);
   const { email, password, firstName } = req.body;
   let user;
+  if (!email || !password || !firstName) {
+    return res
+      .status(400)
+      .send({ message: "need email,password and firstName" });
+  }
   try {
     user = await prisma.user.create({
       data: {
@@ -19,7 +24,7 @@ export const signUp = async (req: express.Request, res: express.Response) => {
   } catch (e) {
     res.status(401);
     res.json({
-      error: `${e} User already exist`,
+      error: `User already exist`,
     });
     return;
   }
@@ -52,7 +57,13 @@ export const signUp = async (req: express.Request, res: express.Response) => {
 // signin
 export const signIn = async (req: express.Request, res: express.Response) => {
   const salt = bcryptjs.genSaltSync(10);
-  const { email, password } = req.body;
+  const {
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  } = req.body;
   let user;
   user = await prisma.user.findUnique({
     where: {

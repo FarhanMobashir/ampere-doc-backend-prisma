@@ -26,7 +26,7 @@ export const getOneNote = validateRoute(
       const doc = await prisma.note.findFirst({
         where: {
           createdBy: user.id,
-          id: Number(req.params.id),
+          id: req.params.id,
         },
       });
       res.json(doc);
@@ -78,16 +78,27 @@ export const updateNote = validateRoute(
         title: string;
         body: string;
       } = req.body;
-      const doc = await prisma.note.update({
+      const doc = await prisma.note.updateMany({
         where: {
-          id: Number(req.params.id),
+          createdBy: user.id,
+          id: req.params.id,
         },
         data: {
           title,
           body,
         },
       });
-      res.json(doc);
+      if (doc) {
+        res.status(200).json(
+          await prisma.note.findMany({
+            where: {
+              createdBy: user.id,
+            },
+          })
+        );
+      } else {
+        res.json({ error: "Something Went wrong" });
+      }
     } catch (error) {
       res.json({ error });
       res.status(400).end();
@@ -106,11 +117,25 @@ export const deleteNote = validateRoute(
         title: string;
         body: string;
       } = req.body;
-      const doc = await prisma.note.delete({
+      const doc = await prisma.note.deleteMany({
         where: {
-          id: Number(req.params.id),
+          createdBy: user.id,
+          id: req.params.id,
         },
       });
+      if (doc) {
+        res.status(200).json(
+          await prisma.note.findMany({
+            where: {
+              createdBy: user.id,
+            },
+          })
+        );
+      } else {
+        res.status(400).json({
+          error: "Something went wrong",
+        });
+      }
       res.json(doc);
     } catch (error) {
       res.json({ error });
