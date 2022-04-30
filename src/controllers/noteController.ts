@@ -19,6 +19,25 @@ export const getAllNote = validateRoute(
     }
   }
 );
+
+// --> get single note
+export const getNoteByTag = validateRoute(
+  async (req: Request, res: Response, user: User) => {
+    try {
+      const doc = await prisma.note.findMany({
+        where: {
+          createdBy: user.id,
+          tag: req.params.tag,
+        },
+      });
+      res.json(doc);
+    } catch (error) {
+      res.json({ error });
+      res.status(400).end();
+    }
+  }
+);
+
 // --> get single note
 export const getOneNote = validateRoute(
   async (req: Request, res: Response, user: User) => {
@@ -44,14 +63,17 @@ export const createOneNote = validateRoute(
       const {
         title,
         body,
+        tag,
       }: {
         title: string;
         body: string;
+        tag: string;
       } = req.body;
       const doc = await prisma.note.create({
         data: {
           title: title,
           body: body,
+          tag: tag,
           author: {
             connect: {
               id: user.id,
@@ -110,13 +132,6 @@ export const updateNote = validateRoute(
 export const deleteNote = validateRoute(
   async (req: Request, res: Response, user: User) => {
     try {
-      const {
-        title,
-        body,
-      }: {
-        title: string;
-        body: string;
-      } = req.body;
       const doc = await prisma.note.deleteMany({
         where: {
           createdBy: user.id,

@@ -19,6 +19,8 @@ model Note {
   body      String
   author    User     @relation(references: [id], fields: [createdBy])
   createdBy String
+  tag       String
+
 }
 
 model User {

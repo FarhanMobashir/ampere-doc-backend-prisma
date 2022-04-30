@@ -22,6 +22,7 @@ const run = async () => {
         data: {
           title: item.title,
           body: item.body,
+          tag: item.tag,
           author: {
             connect: {
               id: user.id,

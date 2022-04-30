@@ -9,6 +9,7 @@ import {
   createOneNote,
   deleteNote,
   getAllNote,
+  getNoteByTag,
   getOneNote,
   updateNote,
 } from "./controllers/noteController";
@@ -40,6 +41,7 @@ app.get("/notes/:id", getOneNote);
 app.patch("/notes/:id", updateNote);
 app.delete("/notes/:id", deleteNote);
 app.post("/notes/create", createOneNote);
+app.get("/notes/tag/:tag", getNoteByTag);
 
 // starting the app
 app.listen(port, () => {
