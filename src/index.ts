@@ -27,10 +27,6 @@ const prisma = new PrismaClient();
 
 app.get("/", async (req, res) => {
   const notes = await prisma.note.findMany();
-  res.send({
-    message: "Hello from the server",
-    notes: notes,
-  });
 });
 
 app.post("/signup", signUp);
